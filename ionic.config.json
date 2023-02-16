@@ -1,0 +1,7 @@
+{
+  "name": "pdfViewer-ionic-task",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue"
+}
