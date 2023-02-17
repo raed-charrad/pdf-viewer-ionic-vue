@@ -26,32 +26,46 @@
     </ion-page>
 </template>
 
-<script >
+<script lang="js" >
 import { defineComponent } from 'vue'
 import {usePDF, VuePDF} from '@tato30/vue-pdf'
-import { IonPage,IonContent ,IonIcon,IonButton,IonFooter} from '@ionic/vue';
+import { IonContent ,IonIcon,IonButton,IonFooter ,IonToolbar,IonPage} from '@ionic/vue';
 import { ref } from 'vue';
 import { removeCircleOutline,addCircleOutline } from 'ionicons/icons';
+import { useRoute } from 'vue-router';
+import store from '@/store';
 export default defineComponent({
     components: {
-        IonPage,
         IonContent,
         VuePDF,
         IonIcon,
         IonButton,
-        IonFooter
+        IonFooter,
+        IonToolbar,
+        IonPage,
     },
     mounted() {
         this.scale = (window.innerWidth *1.75) / 1000
     },
+    watch: {
+        '$route'(currentRoute){
+            this.pdfId = currentRoute.params.id
+        }
+    },
+    computed: {
+        Pdf(){
+            return store.getters.Pdf(this.pdfId)
+        }
+    },
     
     setup () {
+        const route = useRoute();
         const myPdf = ref(null);
         const scale = ref(1);
         const currentPage = ref(1);
+        const pdfId = route.params.id
         const enablement = ref(true)
-
-        const { pdf, pages, info } = usePDF("/Correction_Td3_MongoDB.pdf")
+        const { pdf, pages, info } = usePDF(store.getters.Pdf(pdfId).url);
         return {
             pdf,
             pages,
@@ -61,8 +75,8 @@ export default defineComponent({
             myPdf,
             enablement,
             removeCircleOutline,
-            addCircleOutline
-
+            addCircleOutline,
+            pdfId: route.params.id,
         }
     }
 })

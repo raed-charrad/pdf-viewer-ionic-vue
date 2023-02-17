@@ -5,7 +5,7 @@ import HomePage from '../views/HomePage.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/pdf'
+    redirect: '/list'
   },
   {
     path: '/home',
@@ -13,9 +13,19 @@ const routes: Array<RouteRecordRaw> = [
     component: HomePage
   },
   {
-    path: '/pdf',
+    path: '/pdf/:id',
     name: 'Pdf',
     component: () => import('../views/PdfviewerPage.vue')
+  },
+  {
+    path: '/add',
+    name: 'AddPdf',
+    component: () => import('../views/AddPdfPage.vue')
+  },
+  {
+    path: '/list',
+    name: 'List',
+    component: () => import('../views/ListPdfPage.vue')
   }
 ]
 
