@@ -10,7 +10,7 @@
         
                   <ion-label position="floating">Image</ion-label>
                 </ion-item>
-                <input type="file" required @change="handleFileChange($event)" />
+                <input type="file" required @change="handleFileChange($event)" accept="application/pdf" />
               <ion-item>
                 <ion-label position="floating">Description</ion-label>
                 <ion-textarea rows:5 v-model="enteredDescription"></ion-textarea>
@@ -62,12 +62,13 @@ export default defineComponent({
                console.log(reader.result)
                 readerfile.value = reader.result;
             }
+            reader.readAsDataURL(file);
             reader.onerror = error => {
                 console.log("'Error: ', error");
             }
         };
         const submitForm = () => {
-            toBase64(enteredFile.value);
+            // toBase64(enteredFile.value);
             const pdfData = {
                 name: enteredTitle.value,
                 url: readerfile.value,

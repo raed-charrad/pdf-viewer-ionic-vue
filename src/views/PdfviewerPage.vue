@@ -10,7 +10,19 @@
                 </button>
             </div>
             <div class="text-center" ref="myPdf" >
-                <VuePDF  :pdf="pdf" :page="currentPage" :scale="scale" :text-layer="enablement" />
+                <!-- <pdf   :src="pdf" 
+                        v-for="i in numPages" :key="i" :id="i" 
+                        :page="i" 
+                        :scale="scale" 
+                        style="width:100%;margin:20px auto;" 
+                        :resize="true" /> -->
+                <pdf    :scale="scale"   
+                        :src="pdfUrl" 
+                        @numpages="getPages"
+                        :page="currentPage"
+                        :annotation="true"
+                        :text="true" />
+
             </div>
             
         </ion-content>
@@ -18,8 +30,8 @@
         <ion-toolbar>
             <div class="text-center footer">
                 <ion-button shape="round" class="primary" @click="currentPage = currentPage > 1 ? currentPage - 1 : 1">Prev</ion-button>
-                <div>{{ currentPage }} / {{ pages }}</div>
-                <ion-button shape="round" class="primary" @click="currentPage = currentPage < pages ? currentPage + 1 : pages">Next</ion-button>
+                <div>{{ currentPage }} / {{ numPages }}</div>
+                <ion-button shape="round" class="primary" @click="currentPage = currentPage < numPages ? currentPage + 1 : numPages">Next</ion-button>
             </div>
         </ion-toolbar>
     </ion-footer>
@@ -28,8 +40,13 @@
 
 <script lang="js" >
 import { defineComponent } from 'vue'
-import {usePDF, VuePDF} from '@tato30/vue-pdf'
-import { IonContent ,IonIcon,IonButton,IonFooter ,IonToolbar,IonPage} from '@ionic/vue';
+// import {usePDF, VuePDF} from '@tato30/vue-pdf'
+import pdf   from 'pdfvuer';
+
+import { IonContent ,
+    IonIcon,
+    IonButton,
+    IonFooter ,IonToolbar,IonPage} from '@ionic/vue';
 import { ref } from 'vue';
 import { removeCircleOutline,addCircleOutline } from 'ionicons/icons';
 import { useRoute } from 'vue-router';
@@ -37,7 +54,7 @@ import store from '@/store';
 export default defineComponent({
     components: {
         IonContent,
-        VuePDF,
+        pdf ,
         IonIcon,
         IonButton,
         IonFooter,
@@ -45,7 +62,7 @@ export default defineComponent({
         IonPage,
     },
     mounted() {
-        this.scale = (window.innerWidth *1.75) / 1000
+        this.scale = (window.innerWidth *1.5) / 1000
     },
     watch: {
         '$route'(currentRoute){
@@ -65,11 +82,16 @@ export default defineComponent({
         const currentPage = ref(1);
         const pdfId = route.params.id
         const enablement = ref(true)
-        const { pdf, pages, info } = usePDF(store.getters.Pdf(pdfId).url);
+        const numPages = ref(0);
+        // const { pdf, pages, info } = usePDF(store.getters.Pdf(pdfId).url);
+        const pdfUrl = store.getters.Pdf(pdfId).url
+        store.getters.Pdf(pdfId)
+        const getPages = (pages) => {
+            numPages.value = pages
+        }
         return {
-            pdf,
-            pages,
-            info,
+            pdfUrl,
+            numPages,
             currentPage,
             scale,
             myPdf,
@@ -77,6 +99,7 @@ export default defineComponent({
             removeCircleOutline,
             addCircleOutline,
             pdfId: route.params.id,
+            getPages,
         }
     }
 })
